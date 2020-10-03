@@ -29,7 +29,7 @@ char *mstrncpy(char *destination, const char *source, size_t num);
  * @param source C string to be copied.
  * @return destination is returned.
  */
-char *mstrncpy(char *destination, const char *source);
+char *mstrcpy(char *destination, const char *source);
 
 /**
  * Concatenate strings

@@ -6,7 +6,8 @@
 
 size_t mstrlen(const char *str) {
     size_t i = 0;
-    while (str[i++] != '\0');
+    while (str[i] != '\0')
+        i++;
     return i;
 }
 
@@ -21,7 +22,7 @@ char *mstrncpy(char *destination, const char *source, size_t num) {
     return destination;
 }
 
-char *mstrncpy(char *destination, const char *source) {
+char *mstrcpy(char *destination, const char *source) {
     size_t i;
 
     for (i = 0; source[i] != '\0'; i++)
@@ -99,12 +100,9 @@ char *mstrstr(char *str1, const char *str2) {
 }
 
 char *mstrtok(char *str, const char *delimiters) {
-    char *_buffer;
-    if (str)
-        _buffer = str;
-
-    if (_buffer[0] == '\0')
-        return nullptr;
+    static char *_buffer;
+    if (str != nullptr) _buffer = str;
+    if (_buffer[0] == '\0') return nullptr;
 
     char *ret = _buffer, *b;
     const char *d;
