@@ -160,8 +160,8 @@ struct mdes
     }
 };
 
-void sort_asc() {
-    printf("%s\n", "sort_asc");
+void sort_beg() {
+    printf("%s\n", "sort_beg");
 
     string str, path = "../romandjul.txt";
     ifstream file(path, ifstream::in);
@@ -183,8 +183,8 @@ void sort_asc() {
     printf("\n");
 }
 
-void sort_des() {
-    printf("%s\n", "sort_des");
+void sort_end() {
+    printf("%s\n", "sort_end");
 
     string str, path = "../romandjul.txt";
     ifstream file(path, ifstream::in);
@@ -209,8 +209,8 @@ void sort_des() {
 int main() {
     test_all();
 
-    sort_asc();
-    sort_des();
+    sort_beg();
+    sort_end();
 
     return 0;
 }
