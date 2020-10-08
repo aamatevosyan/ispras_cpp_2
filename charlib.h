@@ -15,6 +15,13 @@
 size_t mstrlen(const char *str);
 
 /**
+ * Returns the length of the C string str.
+ * @param str C string.
+ * @return The length of string.
+ */
+size_t mstrlen(const wchar_t *str);
+
+/**
  * Copy characters from string
  * @param destination Pointer to the destination array where the content is to be copied.
  * @param source C string to be copied.
@@ -30,6 +37,14 @@ char *mstrncpy(char *destination, const char *source, size_t num);
  * @return destination is returned.
  */
 char *mstrcpy(char *destination, const char *source);
+
+/**
+ * Copy characters from string
+ * @param destination Pointer to the destination array where the content is to be copied.
+ * @param source C string to be copied.
+ * @return destination is returned.
+ */
+wchar_t *mstrcpy(wchar_t *destination, const wchar_t *source);
 
 /**
  * Concatenate strings
@@ -90,6 +105,18 @@ char *mstrtok(char *str, const char *delimiters);
 int mstrcmp(const char *str1, const char *str2);
 
 /**
+ * Compare two strings
+ * @param str1 C string to be compared.
+ * @param str2 C string to be compared.
+ * @return Returns an integral value indicating the relationship between the strings:
+ * return value	indicates
+ * <0	the first character that does not match has a lower value in ptr1 than in ptr2
+ * 0	the contents of both strings are equal
+ * >0	the first character that does not match has a greater value in ptr1 than in ptr2
+ */
+int mstrcmp(const wchar_t *str1, const wchar_t *str2);
+
+/**
  * Compare two strings using reverse order
  * @param str1 C string to be compared.
  * @param str2 C string to be compared.
@@ -100,5 +127,17 @@ int mstrcmp(const char *str1, const char *str2);
  * >0	the first character that does not match has a greater value in ptr1 than in ptr2
  */
 int mbstrcmp(const char *str1, const char *str2);
+
+/**
+ * Compare two strings using reverse order
+ * @param str1 C string to be compared.
+ * @param str2 C string to be compared.
+ * @return Returns an integral value indicating the relationship between the strings:
+ * return value	indicates
+ * <0	the first character that does not match has a lower value in ptr1 than in ptr2
+ * 0	the contents of both strings are equal
+ * >0	the first character that does not match has a greater value in ptr1 than in ptr2
+ */
+int mbstrcmp(const wchar_t *str1, const wchar_t *str2);
 
 #endif //ISPRAS_CPP_2_CHARLIB_H

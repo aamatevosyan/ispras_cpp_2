@@ -5,6 +5,16 @@
 #include "charlib.h"
 
 size_t mstrlen(const char *str) {
+    if (str == nullptr)
+        return 0;
+
+    size_t i = 0;
+    while (str[i] != '\0')
+        i++;
+    return i;
+}
+
+size_t mstrlen(const wchar_t *str) {
     size_t i = 0;
     while (str[i] != '\0')
         i++;
@@ -23,6 +33,15 @@ char *mstrncpy(char *destination, const char *source, size_t num) {
 }
 
 char *mstrcpy(char *destination, const char *source) {
+    size_t i;
+
+    for (i = 0; source[i] != '\0'; i++)
+        destination[i] = source[i];
+
+    return destination;
+}
+
+wchar_t *mstrcpy(wchar_t *destination, const wchar_t *source) {
     size_t i;
 
     for (i = 0; source[i] != '\0'; i++)
@@ -129,7 +148,26 @@ int mstrcmp(const char *str1, const char *str2) {
     while (*str1 && (*str1 == *str2))
         str1++, str2++;
 
-    return *(const unsigned char *) str1 - *(const unsigned char *) str2;
+    return (str1 == str2) ? 0 : (str1 < str2) ? -1 : 1;
+}
+
+int mstrcmp(const wchar_t *str1, const wchar_t *str2) {
+    while (*str1 && (*str1 == *str2))
+        str1++, str2++;
+
+    return (str1 == str2) ? 0 : (str1 < str2) ? -1 : 1;
+}
+
+
+int mbstrcmp(const wchar_t *str1, const wchar_t *str2) {
+    size_t len1 = mstrlen(str1), len2 = mstrlen(str2);
+    str1 += len1 - 1;
+    str2 += len2 - 1;
+
+    while (*str1 && (*str1 == *str2))
+        str1--, str2--;
+
+    return (str1 == str2) ? 0 : (str1 < str2) ? -1 : 1;
 }
 
 int mbstrcmp(const char *str1, const char *str2) {
@@ -140,7 +178,7 @@ int mbstrcmp(const char *str1, const char *str2) {
     while (*str1 && (*str1 == *str2))
         str1--, str2--;
 
-    return *(const unsigned char *) str1 - *(const unsigned char *) str2;
+    return (str1 == str2) ? 0 : (str1 < str2) ? -1 : 1;
 }
 
 

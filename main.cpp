@@ -1,12 +1,53 @@
 #include <iostream>
 #include <cassert>
-#include <fstream>
 #include <algorithm>
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <fstream>
+#include <codecvt>
 #include "charlib.h"
+#include <vector>
 
 using namespace std;
+
+// trim from start (in place)
+static inline void ltrim(std::string &s) {
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
+        return !std::isspace(ch);
+    }));
+}
+
+// trim from end (in place)
+static inline void rtrim(std::string &s) {
+    s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
+        return !std::isspace(ch);
+    }).base(), s.end());
+}
+
+// trim from both ends (in place)
+static inline void trim(std::string &s) {
+    ltrim(s);
+    rtrim(s);
+}
+
+// trim from start (copying)
+static inline std::string ltrim_copy(std::string s) {
+    ltrim(s);
+    return s;
+}
+
+// trim from end (copying)
+static inline std::string rtrim_copy(std::string s) {
+    rtrim(s);
+    return s;
+}
+
+// trim from both ends (copying)
+static inline std::string trim_copy(std::string s) {
+    trim(s);
+    return s;
+}
 
 void test_mstrlen() {
     printf("%s\n", "test_mstrlen");
@@ -144,73 +185,77 @@ void test_all() {
     test_mbstrcmp();
 }
 
-struct masc
-{
-    inline bool operator() (const char* a, const char* b)
-    {
-        return mstrcmp(a, b) < 0;
+struct masc {
+    inline bool operator()(const string &a, const string &b) {
+        for (size_t i = 0, j = 0; i < a.length() || j < b.length();) {
+            while (ispunct(a[i]) || isspace(a[i]))
+                i++;
+
+            while (ispunct(b[j]) || isspace(b[j]))
+                j++;
+
+            if (tolower(a[i]) == tolower(b[j]))
+                i++, j++;
+            else
+                return tolower(a[i]) < tolower(b[j]);
+        }
+        return false;
     }
 };
 
-struct mdes
-{
-    inline bool operator() (const char* a, const char* b)
-    {
-        return mbstrcmp(a, b) < 0;
+struct mdes {
+    inline bool operator()(const string &a, const string &b) {
+        for (size_t i = a.length() - 1, j = b.length() - 1; (i >= 0 || j >= 0);) {
+            while (ispunct(a[i]) || isspace(a[i]))
+                i--;
+
+            while (ispunct(b[j]) || isspace(b[j]))
+                j--;
+
+            if (tolower(a[i]) == tolower(b[j]))
+                i--, j--;
+            else
+                return tolower(a[i]) < tolower(b[j]);
+        }
+        return false;
     }
 };
 
-void sort_beg() {
-    printf("%s\n", "sort_beg");
-
-    string str, path = "../romandjul.txt";
-    ifstream file(path, ifstream::in);
-    char ** lines = new char*[80];
-    int ind = 0;
+template<typename T>
+void sortAndSaveTo(const char *filename, const char *pathToSave, T comparator) {
+    ifstream file(filename);
+    vector<string> lines;
+    string str;
 
     while (getline(file, str)) {
-        lines[ind] = new char[mstrlen(str.c_str())];
-        mstrcpy(lines[ind], str.c_str());
-        ind++;
+        string trimmed = trim_copy(str);
+        if (str.length() != 0)
+            lines.push_back(str);
     }
     file.close();
 
-    sort(lines, lines + ind, masc());
+    sort(lines.begin(), lines.end(), comparator);
 
-    for (int i = 0; i < ind; i++)
-        printf("%s\n", lines[i]);
-
-    printf("\n");
-}
-
-void sort_end() {
-    printf("%s\n", "sort_end");
-
-    string str, path = "../romandjul.txt";
-    ifstream file(path, ifstream::in);
-    char ** lines = new char*[80];
-    int ind = 0;
-
-    while (getline(file, str)) {
-        lines[ind] = new char[mstrlen(str.c_str())];
-        mstrcpy(lines[ind], str.c_str());
-        ind++;
+    ofstream fout(pathToSave);
+    for (auto & line : lines) {
+        fout << line << endl;
     }
-    file.close();
-
-    sort(lines, lines + ind, mdes());
-
-    for (int i = 0; i < ind; i++)
-        printf("%s\n", lines[i]);
-
-    printf("\n");
+    fout.close();
 }
 
 int main() {
+    setlocale(LC_ALL, "en_US.UTF-8");
+    locale::global(locale());
+    wcin.imbue(locale());
+    wcout.imbue(locale());
+
     test_all();
 
-    sort_beg();
-    sort_end();
+    sortAndSaveTo("../hamlet.txt", "../hamlet-asc.txt", masc());
+    sortAndSaveTo("../hamlet.txt", "../hamlet-des.txt", mdes());
+
+    sortAndSaveTo("../onegin.txt", "../onegin-asc.txt", masc());
+    sortAndSaveTo("../onegin.txt", "../onegin-des.txt", mdes());
 
     return 0;
 }
